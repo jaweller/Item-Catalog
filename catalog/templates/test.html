@@ -1,0 +1,42 @@
+<html>
+
+<head>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+	</head>
+
+
+<body>
+<div class = 'pane'>
+<h1>Platforms</h1>
+
+<a href='{{url_for('newplatform')}}' > <h3> Create a New Platform </h3> </a>
+
+{% for platform in platforms %}
+
+
+
+<a href = '{{url_for('gameCatalog', platform_id = platform.id)}}'> <p>{{platform.name}}</p></a>
+
+<p><a href = '{{url_for('editplatform',platform_id = platform.id)}}'>Edit Platform</a></p>
+
+<p> <a href = '{{url_for('deleteplatform',platform_id = platform.id)}}'>Delete Platform</a> </p>
+
+
+<div>
+	<a href="#" onclick="signOut();">Sign out</a>
+	<script>
+	  function signOut() {
+	    var auth2 = gapi.auth2.getAuthInstance();
+	    auth2.signOut().then(function () {
+	      console.log('User signed out.');
+	    });
+	  }
+	</script>
+</div>	
+
+{% endfor %}
+
+</div>
+</body>
+
+</html>

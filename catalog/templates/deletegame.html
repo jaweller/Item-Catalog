@@ -1,0 +1,20 @@
+<html>
+<head>
+          <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+
+<body>
+<h1> It's only a game, why you have to delete {{i.name}}? </h1>
+
+<form action="{{ url_for('deletegame', platform_id = i.platform_id, game_id = i.id)}}" method = 'post'>
+
+<input type='submit', value = 'Delete'>
+
+
+
+
+</form>
+
+<a href = "{{ url_for('gameCatalog', platform_id = i.platform_id)}}"> Cancel </a>
+</body>
+
+</html>
