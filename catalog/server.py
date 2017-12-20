@@ -274,7 +274,7 @@ def newplatform():
     if request.method == 'POST':
         newPlatform = Platform(name=request.form['name'],
                                user_id=login_session['user_id'])
-        session.add(new)
+        session.add(newPlatform)
         session.commit()
         return redirect(url_for('showplatforms'))
     else:
