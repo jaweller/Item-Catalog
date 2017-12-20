@@ -132,18 +132,18 @@ def createUser(login_session):
                    'email'], picture=login_session['picture'])
     session.add(newUser)
     session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
+    user = session.query(User).filter_by(email=login_session['email']).all()
     return user.id
 
 
 def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
+    user = session.query(User).filter_by(id=user_id).all()
     return user
 
 
 def getUserID(email):
     try:
-        user = session.query(User).filter_by(email=email).one()
+        user = session.query(User).filter_by(email=email).all()
         return user.id
     except:
         return None
@@ -201,7 +201,11 @@ def gamesforplatformJSON(platform_id):
 @app.route('/platform/')
 def showplatforms():
     platforms = session.query(Platform).all()
-    return render_template('test.html', platforms=platforms)
+    if 'username' not in login_session:
+        return render_template('localtest.html', platforms = platforms)
+    else:
+        return render_template('test.html', platforms = platforms)
+
 
 
 @app.route('/')
@@ -209,8 +213,11 @@ def showplatforms():
 def gameCatalog(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
     items = session.query(Games).filter_by(platform_id=platform.id)
-    return render_template(
-        'platform.html', platform=platform, platform_id=platform_id, items=items)
+    if 'username' not in login_session:
+        return render_template('localplatform.html', items=items, platform = platform,)
+    else:
+        return render_template('platform.html', items=items, platform = platform,)
+
 
 # show games
 
