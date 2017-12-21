@@ -3,16 +3,18 @@ from flask_oauth import OAuth
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from application import Base, Platform, Games, User
+app = Flask(__name__)
+
 from flask import session as login_session
 import random
 import string
+
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 from flask import make_response
 import requests
-app = Flask(__name__)
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())[
     'web']['client_id']
@@ -28,6 +30,7 @@ session = DBSession()
 
 
 @app.route('/')
+@app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
@@ -120,7 +123,7 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px height: 300px border - radius: 150px-webkit - border - radius: 150px-moz - border - radius: 150px"> '
-    flash("you are logged in as %s" % login_session['username'])
+    flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
 
@@ -132,18 +135,18 @@ def createUser(login_session):
                    'email'], picture=login_session['picture'])
     session.add(newUser)
     session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).all()
+    user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
 
 def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).all()
+    user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
     try:
-        user = session.query(User).filter_by(email=email).all()
+        user = session.query(User).filter_by(email=email).one()
         return user.id
     except:
         return None
@@ -156,8 +159,7 @@ def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps(
-            'Current user not connected.'), 401)
+        response = make_response(json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
@@ -201,11 +203,7 @@ def gamesforplatformJSON(platform_id):
 @app.route('/platform/')
 def showplatforms():
     platforms = session.query(Platform).all()
-    if 'username' not in login_session:
-        return render_template('localtest.html', platforms = platforms)
-    else:
-        return render_template('test.html', platforms = platforms)
-
+    return render_template('test.html', platforms=platforms)
 
 
 @app.route('/')
@@ -213,11 +211,8 @@ def showplatforms():
 def gameCatalog(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
     items = session.query(Games).filter_by(platform_id=platform.id)
-    if 'username' not in login_session:
-        return render_template('localplatform.html', items=items, platform = platform,)
-    else:
-        return render_template('platform.html', items=items, platform = platform,)
-
+    return render_template(
+        'platform.html', platform=platform, platform_id=platform_id, items=items)
 
 # show games
 
@@ -235,6 +230,8 @@ def showgames(platform_id):
 
 @app.route('/platform/<int:platform_id>/new/', methods=['GET', 'POST'])
 def newgame(platform_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         newItem = Games(name=request.form['name'],
                         platform_id=platform_id, user_id=platform.user_id)
@@ -249,6 +246,8 @@ def newgame(platform_id):
 # edit game
 @app.route('/platform/<int:platform_id>/<int:game_id>/edit/', methods=['GET', 'POST'])
 def editgame(platform_id, game_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     editedItem = session.query(Games).filter_by(id=game_id).one()
     if request.method == 'POST':
         if request.form['name']:
@@ -264,6 +263,8 @@ def editgame(platform_id, game_id):
 # delete game
 @app.route('/platform/<int:platform_id>/<int:game_id>/delete/', methods=['GET', 'POST'])
 def deletegame(platform_id, game_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     itemToDelete = session.query(Games).filter_by(id=game_id).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
@@ -278,10 +279,12 @@ def deletegame(platform_id, game_id):
 
 @app.route('/platform/new/', methods=['GET', 'POST'])
 def newplatform():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         newPlatform = Platform(name=request.form['name'],
                                user_id=login_session['user_id'])
-        session.add(newPlatform)
+        session.add(new)
         session.commit()
         return redirect(url_for('showplatforms'))
     else:
@@ -292,6 +295,8 @@ def newplatform():
 
 @app.route('/platform/<int:platform_id>/edit/', methods=['GET', 'POST'])
 def editplatform(platform_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     editedplatform = session.query(
         Platform).filter_by(id=platform_id).one()
     if request.method == 'POST':
@@ -307,6 +312,8 @@ def editplatform(platform_id):
 
 @app.route('/platform/<int:platform_id>/delete/', methods=['GET', 'POST'])
 def deleteplatform(platform_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     platformdeleted = session.query(
         Platform).filter_by(id=platform_id).one()
     if request.method == 'POST':
