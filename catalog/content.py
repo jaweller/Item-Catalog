@@ -18,7 +18,10 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
-
+User1 = User(name="me", email="chefweller@gmail.com",
+             picture='https://beebom-redkapmedia.netdna-ssl.com/wp-content/uploads/2016/01/Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg')
+session.add(User1)
+session.commit()
 # Games for PC
 platform1 = Platform(name="PC")
 
