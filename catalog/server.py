@@ -1,20 +1,19 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_oauth import OAuth
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from application import Base, Platform, Games, User
-app = Flask(__name__)
-
 from flask import session as login_session
 import random
 import string
-
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 from flask import make_response
 import requests
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import jsonify
+app = Flask(__name__)
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())[
     'web']['client_id']
@@ -90,8 +89,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response
+        (json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -159,7 +158,8 @@ def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps('Current user not connected.'),
+        401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
@@ -204,10 +204,9 @@ def gamesforplatformJSON(platform_id):
 def showplatforms():
     platforms = session.query(Platform).all()
     if 'username' not in login_session:
-        return render_template('localtest.html', platforms = platforms)
+        return render_template('localtest.html', platforms=platforms)
     else:
         return render_template('test.html', platforms=platforms)
-
 
 
 @app.route('/')
@@ -229,8 +228,7 @@ def showgames(platform_id):
     items = session.query(Games).filter_by(
         platform_id=platform_id).all()
     if 'username' not in login_session or creator.id != login_session['user.id']:
-        return render_template('localplatform.html', items = items, platform =
-    platform, creator = creator)
+        return render_template('localplatform.html', items=items, platform=platform, creator=creator)
     else:
         return render_template('platform.html', items=items, platform=platform)
 
