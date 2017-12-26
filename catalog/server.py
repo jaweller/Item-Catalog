@@ -201,7 +201,7 @@ def gdisconnect():
 @app.route('/platforms/<int:platform_id>/game/JSON')
 def gamesforplatformJSON(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
-    items = session.query(Game).filter_by(
+    items = session.query(Games).filter_by(
         platform_id=platform_id).all()
     return jsonify(Games=[i.serialize for i in items])
 
