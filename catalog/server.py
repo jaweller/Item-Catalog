@@ -1,10 +1,3 @@
-Check results
-=============
-
-
-
-Code
-=============
 from flask_oauth import OAuth
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
