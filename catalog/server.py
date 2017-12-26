@@ -1,3 +1,10 @@
+Check results
+=============
+
+
+
+Code
+=============
 from flask_oauth import OAuth
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -121,7 +128,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px height: 300px border - radius: 150px-webkit - border - radius: 150px-moz - border - radius: 150px"> '
+    output += ' " style = "width: 300px height: 300px border - radius:150px;-\
+    webkit - border - radius: 150px-moz - border - radius: 150px"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -159,13 +167,14 @@ def gdisconnect():
     if access_token is None:
         print 'Access Token is None'
         response = make_response(json.dumps('Current user not connected.'),
-        401)
+                                 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s'
+    % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -215,7 +224,8 @@ def gameCatalog(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
     items = session.query(Games).filter_by(platform_id=platform.id)
     return render_template(
-        'platform.html', platform=platform, platform_id=platform_id, items=items)
+        'platform.html', platform=platform, platform_id=platform_id,
+        items=items)
 
 # show games
 
@@ -227,8 +237,10 @@ def showgames(platform_id):
     creator = getUserInfo(platform.user_id)
     items = session.query(Games).filter_by(
         platform_id=platform_id).all()
-    if 'username' not in login_session or creator.id != login_session['user.id']:
-        return render_template('localplatform.html', items=items, platform=platform, creator=creator)
+    if 'username' not in login_session or creator.id != login_session
+    ['user.id']:
+        return render_template('localplatform.html',
+                               items=items, platform=platform, creator=creator)
     else:
         return render_template('platform.html', items=items, platform=platform)
 
@@ -251,7 +263,8 @@ def newgame(platform_id):
 
 
 # edit game
-@app.route('/platform/<int:platform_id>/<int:game_id>/edit/', methods=['GET', 'POST'])
+@app.route('/platform/<int:platform_id>/<int:game_id>/edit/',
+           methods=['GET', 'POST'])
 def editgame(platform_id, game_id):
     if 'username' not in login_session:
         return redirect('/login')
@@ -264,11 +277,15 @@ def editgame(platform_id, game_id):
             flash("Game was edited")
             return redirect(url_for('gameCatalog', platform_id=platform_id))
     else:
-        return render_template('editgame.html', platform_id=platform_id, game_id=game_id, i=editedItem)
+        return render_template('editgame.html', platform_id=platform_id,
+                               game_id=game_id, i=editedItem)
 
 
 # delete game
-@app.route('/platform/<int:platform_id>/<int:game_id>/delete/', methods=['GET', 'POST'])
+@app.route
+('/platform/<int:platform_id>/<int:game_id>/delete/', methods=['GET', 'POST'])
+
+
 def deletegame(platform_id, game_id):
     if 'username' not in login_session:
         return redirect('/login')
