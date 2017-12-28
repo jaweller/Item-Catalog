@@ -166,8 +166,8 @@ def gdisconnect():
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s'
-    % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session
+    ['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -230,8 +230,7 @@ def showgames(platform_id):
     creator = getUserInfo(platform.user_id)
     items = session.query(Games).filter_by(
         platform_id=platform_id).all()
-    if 'username' not in login_session or creator.id != login_session
-    ['user.id']:
+    if 'username' not in login_session or creator.id != login_session['user.id']:
         return render_template('localplatform.html',
                                items=items, platform=platform, creator=creator)
     else:
@@ -275,10 +274,8 @@ def editgame(platform_id, game_id):
 
 
 # delete game
-@app.route
-('/platform/<int:platform_id>/<int:game_id>/delete/', methods=['GET', 'POST'])
-
-
+@app.route('/platform/<int:platform_id>/<int:game_id>/delete/',
+           methods=['GET', 'POST'])
 def deletegame(platform_id, game_id):
     if 'username' not in login_session:
         return redirect('/login')
