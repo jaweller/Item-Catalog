@@ -130,6 +130,7 @@ session.commit()
 game2 = Games(user_id=1, name="Splatoon 2", description="Splatoon 2 is a team-based third-person shooter video game developed and published by Nintendo for the Nintendo Switch",
               price="$55.00", genre="TPOMS", platform=platform4)
 
+
 session.add(game2)
 session.commit()
 
