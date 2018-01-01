@@ -241,11 +241,12 @@ def showgames(platform_id):
 
 @app.route('/platform/<int:platform_id>/new/', methods=['GET', 'POST'])
 def newgame(platform_id):
+    platform = session.query(Platform).filter_by(id=platform_id).all()
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
         newItem = Games(name=request.form['name'],
-                        platform_id=platform_id, user_id=platform.user_id)
+                        platform_id=platform_id,)
         session.add(newItem)
         session.commit()
         flash("GG New game created!")
