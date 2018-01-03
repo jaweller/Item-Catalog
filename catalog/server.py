@@ -89,8 +89,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response
-        (json.dumps('Current user is already connected.'), 200)
+        response = make_response(json.dumps('Current user  already connected.'),
+                                 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -109,85 +109,17 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
-    # see if user exists
-    user_id = getUserID(login_session['email'])
-    if not user_id:
-        user_id = createUser(login_session)
-    login_session['user_id'] = user_id
-
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px height: 300px border - radius:150px;-\
-    webkit - border - radius: 150px-moz - border - radius: 150px"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-\
+    webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
-
-# Creates user
-
-
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).first()
-    return user.id
-
-
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).first()
-    return user
-
-
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).first()
-        return user.id
-    except:
-        return None
-
-# disconnects users from server login
-
-
-@app.route('/gdisconnect')
-def gdisconnect():
-    access_token = login_session.get('access_token')
-    if access_token is None:
-        print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'),
-                                 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    print 'In gdisconnect access token is %s', access_token
-    print 'User name is: '
-    print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session
-    ['access_token']
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[0]
-    print 'result is '
-    print result
-
-    if result['status'] == '200':
-        del login_session['access_token']
-        del login_session['gplus_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    else:
-        response = make_response(json.dumps(
-            'Failed to revoke token for given user.', 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
-
 # JSON endpoint
 
 
@@ -239,7 +171,7 @@ def showgames(platform_id):
 # new game
 
 
-@app.route('/platform/<int:platform_id>/new/', methods=['GET', 'POST'])
+@app.route('/platform/<int:platform_id>/platform/new/', methods=['GET', 'POST'])
 def newgame(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).all()
     if 'username' not in login_session:
