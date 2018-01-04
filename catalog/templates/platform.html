@@ -17,18 +17,16 @@
   {% endwith %}
 
 
-
-{% for i in items %}
+  <h2><a href='{{url_for('newgame', platform_id = platform.id) }}'>Create new game</a>
+  {% for i in items %}
 
 <div>
 
-<p>{{i.name}}</p>
+  <p>{{i.name}}</p>
 
-<p>{{i.description}}</p>
+  <p>{{i.description}}</p>
 
-<p> {{i.price}} </p>
-
-<h2><a href='{{url_for('newgame', platform_id = platform.id, game_id = i.id) }}'>Create new game</a>
+  <p> {{i.price}} </p>
 
 <a href='{{url_for('editgame', platform_id = platform.id, game_id = i.id) }}'>Edit game</a>
 
