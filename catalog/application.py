@@ -54,7 +54,7 @@ class Games(Base):
             'description': self.description,
             'id': self.id,
             'price': self.price,
-            'course': self.course,
+            'genre': self.genre,
         }
 
 
