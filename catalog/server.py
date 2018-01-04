@@ -244,8 +244,7 @@ def newgame(platform_id):
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newItem = Games(name=request.form['name'],
-                        platform_id=platform_id,)
+        newItem = Games(name=request.form['name'],description=request.form['description'],platform_id=platform_id,)
         session.add(newItem)
         session.commit()
         flash("GG New game created!")
