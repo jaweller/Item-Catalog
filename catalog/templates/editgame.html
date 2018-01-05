@@ -8,6 +8,13 @@
   <p>Name:</p>
     <input type = 'text' size='40' name = 'name' placeholder = '{{i.name}}'>
 
+    <p>Description:</p>
+
+      <input type='text' size='40' name='description'>
+
+    <p>Price:</p>
+
+      <input type='text' size='40' name='price'>
 <input type='submit' value='Edit'>
 </form>
 <a href= '{{url_for('gameCatalog', platform_id = i.platform_id)}}'>Cancel</a>

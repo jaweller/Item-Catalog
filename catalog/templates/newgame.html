@@ -7,19 +7,22 @@
 <form action="{{url_for('newgame', platform_id=platform_id, )}}" method = 'POST'>
 
 <p>Name:</p>
-
 <input type='text' size='40' name='name'>
 
-<input type='submit' value='Create'>
-</form>
-
-<form action="{{url_for('newgame', platform_id=platform_id, )}}" method = 'POST'>
 <p>Description:</p>
 
-<input type='text' size='40' description='description'>
+<input type='text' size='40' name='description'>
+
+<p>Price:</p>
+
+<input type='text' size='40' name='price'>
+
 
 <input type='submit' value='Create'>
 </form>
+
+
+
 
 
 </body>

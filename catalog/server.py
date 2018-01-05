@@ -109,7 +109,7 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
-    #see if user exists
+    # see if user exists
     user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
@@ -127,7 +127,8 @@ def gconnect():
     print "done!"
     return output
 
-#creates user
+# creates user
+
 
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
@@ -150,7 +151,8 @@ def getUserID(email):
     except:
         return None
 
-#disconnects user from server login
+# disconnects user from server login
+
 
 @app.route('/gdisconnect')
 def gdisconnect():
@@ -186,16 +188,14 @@ def gdisconnect():
         return response
 
 
-
-
-
-#Json endpoint
+# Json endpoint
 @app.route('/platform/<int:platform_id>/game/JSON')
 def gamesforplatformJSON(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
     items = session.query(Games).filter_by(
         platform_id=platform_id).all()
     return jsonify(Games=[i.serialize for i in items])
+
 
 @app.route('/platform/<int:platform_id>/game/<int:menu_id>/JSON')
 def gameJSON(platform_id, game_id):
@@ -255,11 +255,12 @@ def newgame(platform_id):
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newItem = Games(name=request.form['name'],description=request.form['description'],platform_id=platform_id,)
+        newItem = Games(name=request.form['name'], description=request.form['description'],
+                        price=request.form['price'], platform_id=platform_id,)
         session.add(newItem)
         session.commit()
         flash("GG New game created!")
-        return redirect(url_for('gameCatalog', platform_id=platform_id))
+        return redirect(url_for('showplatforms', platform_id=platform_id))
     else:
         return render_template('newgame.html', platform_id=platform_id)
 
