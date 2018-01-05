@@ -58,7 +58,7 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    # Check that the access token is valid.
+    # Check that the  token is valid.
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
@@ -190,12 +190,23 @@ def gdisconnect():
 
 
 #Json endpoint
-@app.route('/platforms/<int:platform_id>/game/JSON')
+@app.route('/platform/<int:platform_id>/game/JSON')
 def gamesforplatformJSON(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
     items = session.query(Games).filter_by(
         platform_id=platform_id).all()
     return jsonify(Games=[i.serialize for i in items])
+
+@app.route('/platform/<int:platform_id>/game/<int:menu_id>/JSON')
+def gameJSON(platform_id, game_id):
+    game = session.query(Games).filter_by(id=game_id).one()
+    return jsonify(Games=Games.serialize)
+
+
+@app.route('/platform/JSON')
+def platformsJSON():
+    platforms = session.query(Platform).all()
+    return jsonify(platforms=[r.serialize for r in platforms])
 
 # Show platforms
 
