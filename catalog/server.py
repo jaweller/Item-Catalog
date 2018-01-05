@@ -251,11 +251,17 @@ def showgames(platform_id):
 
 @app.route('/platform/<int:platform_id>/platform/new/', methods=['GET', 'POST'])
 def newgame(platform_id):
-    platform = session.query(Platform).filter_by(id=platform_id).all()
+    platform = session.query(Platform).filter_by(id=platform_id).one()
     if 'username' not in login_session:
         return redirect('/login')
+    if login_session['user_id'] != platform.user_id:
+        return "<script>function myFunction() \
+            {alert('You are not allowed to add games to this\
+            platform. Create your own platform in order to\
+            add games.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
-        newItem = Games(name=request.form['name'], description=request.form['description'],
+        newItem = Games(name=request.form['name'],
+                        description=request.form['description'],
                         price=request.form['price'], platform_id=platform_id,)
         session.add(newItem)
         session.commit()
@@ -269,16 +275,22 @@ def newgame(platform_id):
 @app.route('/platform/<int:platform_id>/<int:game_id>/edit/',
            methods=['GET', 'POST'])
 def editgame(platform_id, game_id):
+    editedItem = session.query(Games).filter_by(id=game_id).one()
+    platform = session.query(Platform).filter_by(id=platform_id).one()
     if 'username' not in login_session:
         return redirect('/login')
-    editedItem = session.query(Games).filter_by(id=game_id).one()
+    if login_session['user_id'] != platform.user_id:
+        return "<script>function myFunction() \
+            {alert('You are not allowed to edit games for this\
+            platform. Create your own platform in order to\
+            edit games.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
             session.add(editedItem)
             session.commit()
             flash("Game was edited")
-            return redirect(url_for('gameCatalog', platform_id=platform_id))
+            return redirect(url_for('showplatforms', platform_id=platform_id))
     else:
         return render_template('editgame.html', platform_id=platform_id,
                                game_id=game_id, i=editedItem)
@@ -288,14 +300,20 @@ def editgame(platform_id, game_id):
 @app.route('/platform/<int:platform_id>/<int:game_id>/delete/',
            methods=['GET', 'POST'])
 def deletegame(platform_id, game_id):
+    itemToDelete = session.query(Games).filter_by(id=game_id).one()
+    platform = session.query(Platform).filter_by(id=platform_id).one()
     if 'username' not in login_session:
         return redirect('/login')
-    itemToDelete = session.query(Games).filter_by(id=game_id).one()
+    if login_session['user_id'] != platform.user_id:
+        return "<script>function myFunction() \
+            {alert('You are not allowed to delete games for this\
+            platform. Create your own platform in order to\
+            delete games.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
         flash("Game was deleted")
-        return redirect(url_for('gameCatalog', platform_id=platform_id))
+        return redirect(url_for('showplatforms', platform_id=platform_id))
     else:
         return render_template('deletegame.html', i=itemToDelete)
 
@@ -320,10 +338,16 @@ def newplatform():
 
 @app.route('/platform/<int:platform_id>/edit/', methods=['GET', 'POST'])
 def editplatform(platform_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     editedplatform = session.query(
         Platform).filter_by(id=platform_id).one()
+    platform = session.query(Platform).filter_by(id=platform_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
+    if login_session['user_id'] != platform.user_id:
+        return "<script>function myFunction() \
+            {alert('You are not allowed to edit this\
+            platform. Create your own platform in order to\
+            edit.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         if request.form['name']:
             editedplatform.name = request.form['name']
@@ -337,10 +361,16 @@ def editplatform(platform_id):
 
 @app.route('/platform/<int:platform_id>/delete/', methods=['GET', 'POST'])
 def deleteplatform(platform_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     platformdeleted = session.query(
         Platform).filter_by(id=platform_id).one()
+    platform = session.query(Platform).filter_by(id=platform_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
+    if login_session['user_id'] != platform.user_id:
+        return "<script>function myFunction() \
+            {alert('You are not allowed to delete this\
+            platform. Create your own platform in order to\
+            delete.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(platformdeleted)
         session.commit()
