@@ -89,7 +89,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user  already connected.'),
+        response = make_response(json.dumps(
+                'Current user  already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -166,7 +167,8 @@ def gdisconnect():
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s'\
+        % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -240,7 +242,8 @@ def showgames(platform_id):
     creator = getUserInfo(platform.user_id)
     items = session.query(Games).filter_by(
         platform_id=platform_id).all()
-    if 'username' not in login_session or creator.id != login_session['user.id']:
+    if ('username' not in login_session or
+       creator.id != login_session['user.id']):
         return render_template('localplatform.html',
                                items=items, platform=platform, creator=creator)
     else:
@@ -249,7 +252,8 @@ def showgames(platform_id):
 # new game
 
 
-@app.route('/platform/<int:platform_id>/platform/new/', methods=['GET', 'POST'])
+@app.route('/platform/<int:platform_id>/platform/new/',
+           methods=['GET', 'POST'])
 def newgame(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
     if 'username' not in login_session:
