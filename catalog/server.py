@@ -190,7 +190,7 @@ def gdisconnect():
         return response
 
 
-# Json endpoint
+# Json endpoints
 @app.route('/platform/<int:platform_id>/game/JSON')
 def gamesforplatformJSON(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
@@ -249,15 +249,17 @@ def showgames(platform_id):
     else:
         return render_template('platform.html', items=items, platform=platform)
 
-# new game
+# functions for creating a new game
 
 
 @app.route('/platform/<int:platform_id>/platform/new/',
            methods=['GET', 'POST'])
 def newgame(platform_id):
     platform = session.query(Platform).filter_by(id=platform_id).one()
+    #checks to see if user is logged in and redirects to login page if not
     if 'username' not in login_session:
         return redirect('/login')
+    #checks if user is creator of a playform before allowing them to add games
     if login_session['user_id'] != platform.user_id:
         return "<script>function myFunction() \
             {alert('You are not allowed to add games to this\
@@ -268,14 +270,14 @@ def newgame(platform_id):
                         description=request.form['description'],
                         price=request.form['price'], platform_id=platform_id,)
         session.add(newItem)
-        session.commit()
         flash("GG New game created!")
+        session.commit()
         return redirect(url_for('showplatforms', platform_id=platform_id))
     else:
         return render_template('newgame.html', platform_id=platform_id)
 
 
-# edit game
+# allows user to edit a game
 @app.route('/platform/<int:platform_id>/<int:game_id>/edit/',
            methods=['GET', 'POST'])
 def editgame(platform_id, game_id):
@@ -300,7 +302,7 @@ def editgame(platform_id, game_id):
                                game_id=game_id, i=editedItem)
 
 
-# delete game
+# allows users to delete game
 @app.route('/platform/<int:platform_id>/<int:game_id>/delete/',
            methods=['GET', 'POST'])
 def deletegame(platform_id, game_id):
@@ -321,7 +323,7 @@ def deletegame(platform_id, game_id):
     else:
         return render_template('deletegame.html', i=itemToDelete)
 
-# newplatform
+# allow user to create a new platform
 
 
 @app.route('/platform/new/', methods=['GET', 'POST'])
@@ -337,7 +339,7 @@ def newplatform():
     else:
         return render_template('newplatform.html')
 
-# edit platform
+# allows users to a edit platform
 
 
 @app.route('/platform/<int:platform_id>/edit/', methods=['GET', 'POST'])
@@ -360,7 +362,7 @@ def editplatform(platform_id):
         return render_template(
             'editplatform.html', platform=editedplatform)
 
-# delete platform
+# allows users to delete platform
 
 
 @app.route('/platform/<int:platform_id>/delete/', methods=['GET', 'POST'])
