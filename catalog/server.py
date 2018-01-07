@@ -199,7 +199,7 @@ def gamesforplatformJSON(platform_id):
     return jsonify(Games=[i.serialize for i in items])
 
 
-@app.route('/platform/<int:platform_id>/game/<int:menu_id>/JSON')
+@app.route('/platform/<int:platform_id>/game/<int:game_id>/JSON')
 def gameJSON(platform_id, game_id):
     game = session.query(Games).filter_by(id=game_id).one()
     return jsonify(Games=Games.serialize)
@@ -255,11 +255,11 @@ def showgames(platform_id):
 @app.route('/platform/<int:platform_id>/platform/new/',
            methods=['GET', 'POST'])
 def newgame(platform_id):
-    platform = session.query(Platform).filter_by(id=platform_id).one()
-    #checks to see if user is logged in and redirects to login page if not
+    # checks to see if user is logged in and redirects to login page if not
     if 'username' not in login_session:
         return redirect('/login')
-    #checks if user is creator of a playform before allowing them to add games
+    platform = session.query(Platform).filter_by(id=platform_id).one()
+    # checks if user is creator of a playform before allowing them to add games
     if login_session['user_id'] != platform.user_id:
         return "<script>function myFunction() \
             {alert('You are not allowed to add games to this\
@@ -278,13 +278,13 @@ def newgame(platform_id):
 
 
 # allows user to edit a game
-@app.route('/platform/<int:platform_id>/<int:game_id>/edit/',
+@app.route('/platform/<int:platform_id>/game/<int:game_id>/edit/',
            methods=['GET', 'POST'])
 def editgame(platform_id, game_id):
-    editedItem = session.query(Games).filter_by(id=game_id).one()
-    platform = session.query(Platform).filter_by(id=platform_id).one()
     if 'username' not in login_session:
         return redirect('/login')
+    editedItem = session.query(Games).filter_by(id=game_id).one()
+    platform = session.query(Platform).filter_by(id=platform_id).one()
     if login_session['user_id'] != platform.user_id:
         return "<script>function myFunction() \
             {alert('You are not allowed to edit games for this\
@@ -306,10 +306,10 @@ def editgame(platform_id, game_id):
 @app.route('/platform/<int:platform_id>/<int:game_id>/delete/',
            methods=['GET', 'POST'])
 def deletegame(platform_id, game_id):
-    itemToDelete = session.query(Games).filter_by(id=game_id).one()
-    platform = session.query(Platform).filter_by(id=platform_id).one()
     if 'username' not in login_session:
         return redirect('/login')
+    itemToDelete = session.query(Games).filter_by(id=game_id).one()
+    platform = session.query(Platform).filter_by(id=platform_id).one()
     if login_session['user_id'] != platform.user_id:
         return "<script>function myFunction() \
             {alert('You are not allowed to delete games for this\
@@ -344,11 +344,11 @@ def newplatform():
 
 @app.route('/platform/<int:platform_id>/edit/', methods=['GET', 'POST'])
 def editplatform(platform_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     editedplatform = session.query(
         Platform).filter_by(id=platform_id).one()
     platform = session.query(Platform).filter_by(id=platform_id).one()
-    if 'username' not in login_session:
-        return redirect('/login')
     if login_session['user_id'] != platform.user_id:
         return "<script>function myFunction() \
             {alert('You are not allowed to edit this\
@@ -367,11 +367,11 @@ def editplatform(platform_id):
 
 @app.route('/platform/<int:platform_id>/delete/', methods=['GET', 'POST'])
 def deleteplatform(platform_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     platformdeleted = session.query(
         Platform).filter_by(id=platform_id).one()
     platform = session.query(Platform).filter_by(id=platform_id).one()
-    if 'username' not in login_session:
-        return redirect('/login')
     if login_session['user_id'] != platform.user_id:
         return "<script>function myFunction() \
             {alert('You are not allowed to delete this\
